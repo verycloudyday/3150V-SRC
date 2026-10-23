@@ -16,14 +16,13 @@ motor RM = motor(PORT1, ratio6_1, true);
 motor LB = motor(PORT11, ratio6_1, false);
 motor RB = motor(PORT20, ratio6_1, true);
 motor Roller = motor(PORT13, ratio6_1, false);
-motor liftL = motor(PORT14, ratio6_1, true);
-motor liftR = motor(PORT17, ratio6_1, true);
+motor liftL = motor(PORT13, ratio6_1, true);
+motor liftR = motor(PORT18, ratio6_1, true);
 motor chainbar = motor(PORT16, ratio18_1, false);
 digital_out Claw = digital_out(Brain.ThreeWirePort.H);
 digital_out IntakeBar = digital_out(Brain.ThreeWirePort.G);
 digital_out Clamp = digital_out(Brain.ThreeWirePort.A);
-digital_out Tilt = digital_out(Brain.ThreeWirePort.C);
-inertial Gyro = inertial(PORT18);
+inertial Gyro = inertial(PORT14);
 distance intakeSensor = distance(PORT15); //change later
 distance backSensor = distance(PORT10); //change later
 //Naming convention: 

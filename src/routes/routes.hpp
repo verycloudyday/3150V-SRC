@@ -5,6 +5,6 @@
     only put declarations in this file
 */
 
-extern void test();
-extern void test2();
+extern void auton1();
+extern void auton2();
 #endif

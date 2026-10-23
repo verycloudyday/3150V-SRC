@@ -38,11 +38,11 @@ void pre_auton(void)
 {
   // Claw.set(true);
   EXIT = false;
-  Tilt.set(true);
   Clamp.set(true);
-  PX = 0;
-  JX = 0;
+  IntakeBar.set(true);
+  Claw.set(false);
   AutoSelectorVal = 0;
+  chainbar.resetPosition();
   SP = false;
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
@@ -70,6 +70,8 @@ void pre_auton(void)
   DisplayWords();
 
   // task AutoSelTask=task(ScreenSelMain);
+
+
   while (!EXIT)
   {
     if (Brain.Screen.xPosition() < 100)
@@ -113,9 +115,9 @@ void pre_auton(void)
     Brain.Screen.setFont(monoXL);
     Brain.Screen.setPenColor("#39FF14");
     Brain.Screen.setCursor(3, 10);
-    Brain.Screen.print("GOAL SIDE");
+    Brain.Screen.print("CENTRE TOGGLE");
     Brain.Screen.setCursor(4, 10);
-    Brain.Screen.print("6 BALL");
+    Brain.Screen.print("3 PIN");
     Brain.Screen.setFont(monoM);
     Brain.Screen.setFillColor("#39FF14");
   }
@@ -127,84 +129,13 @@ void pre_auton(void)
     Brain.Screen.setFont(monoXL);
     Brain.Screen.setPenColor("#39FF14");
     Brain.Screen.setCursor(3, 10);
-    Brain.Screen.print("MATCHLOAD");
+    Brain.Screen.print("CENTRE TOGGLE");
     Brain.Screen.setCursor(4, 10);
-    Brain.Screen.print("StealAWP");
+    Brain.Screen.print("2 PIN");
     Brain.Screen.setFont(monoM);
     Brain.Screen.setFillColor("#39FF14");
   }
 
-  if (AutoSelectorVal == 3)
-  {
-
-    Brain.Screen.setFillColor(black);
-
-    Brain.Screen.setFont(monoXL);
-    Brain.Screen.setPenColor("#39FF14");
-    Brain.Screen.setCursor(3, 10);
-    Brain.Screen.print("GOAL SIDE");
-    Brain.Screen.setCursor(4, 10);
-    Brain.Screen.print("5 BALL");
-    Brain.Screen.setFont(monoM);
-    Brain.Screen.setFillColor("#39FF14");
-  }
-
-  if (AutoSelectorVal == 4)
-  {
-
-    Brain.Screen.setFillColor(black);
-
-    Brain.Screen.setFont(monoXL);
-    Brain.Screen.setPenColor("#39FF14");
-    Brain.Screen.setCursor(3, 10);
-    Brain.Screen.print("MATCHLOAD");
-    Brain.Screen.setCursor(4, 10);
-    Brain.Screen.print("Elim-Steal");
-    Brain.Screen.setFont(monoM);
-    Brain.Screen.setFillColor("#39FF14");
-  }
-
-  if (AutoSelectorVal == 5)
-  {
-
-    Brain.Screen.setFillColor(black);
-    Brain.Screen.setFont(monoXL);
-    Brain.Screen.setPenColor("#39FF14");
-    Brain.Screen.setCursor(3, 10);
-    Brain.Screen.print("GOAL SIDE");
-    Brain.Screen.setCursor(4, 10);
-    Brain.Screen.print("GS-AWP");
-    Brain.Screen.setFont(monoM);
-    Brain.Screen.setFillColor("#39FF14");
-  }
-
-  if (AutoSelectorVal == 6)
-  {
-
-    Brain.Screen.setFillColor(black);
-    Brain.Screen.setFont(monoXL);
-    Brain.Screen.setPenColor("#39FF14");
-    Brain.Screen.setCursor(3, 10);
-    Brain.Screen.print("MATCHLOAD");
-    Brain.Screen.setCursor(4, 10);
-    Brain.Screen.print("ONLY AWP");
-    Brain.Screen.setFont(monoM);
-    Brain.Screen.setFillColor("#39FF14");
-  }
-
-  if (AutoSelectorVal == 7)
-  {
-
-    Brain.Screen.setFillColor(black);
-    Brain.Screen.setFont(monoXL);
-    Brain.Screen.setPenColor("#39FF14");
-    Brain.Screen.setCursor(3, 10);
-    Brain.Screen.print("SKILLS");
-    Brain.Screen.setCursor(4, 10);
-    Brain.Screen.print("SKILLS");
-    Brain.Screen.setFont(monoM);
-    Brain.Screen.setFillColor("#39FF14");
-  }
 
   Brain.Screen.setFillColor(black);
   Brain.Screen.setFont(monoXL);
@@ -213,7 +144,6 @@ void pre_auton(void)
   Brain.Screen.print("AUTO CONFIRMED");
   Brain.Screen.setPenColor("#ff0000");
   Brain.Screen.setCursor(10, 10);
-  Brain.Screen.print("CODE IS STRAIGHT ASS, DELETE IMMEDIATELY");
 
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -238,47 +168,31 @@ void autonomous(void)
   //  MoveTimePID(TestPara, motor speed, time traveled (sec), time to full speed, heading, false);
 
   // Do not change the below
-  if (!EXIT)
-  {
-    EXIT = true;
-    AutoSelectorVal = 1;
-  }
+
+
 
   Zeroing(true, true);
 
   // can start editing if nessary
   // Put Auto route function into if statements to use autoselector
+   if (!EXIT)
+  {
+    EXIT = true;
+    AutoSelectorVal = 1;
+  }
+  
   if (AutoSelectorVal == 1) // double toggle
   {
 
-    test();
+    auton1();
   }
 
   if (AutoSelectorVal == 2) // awp mid steal
   {
-    test2();
+    auton2();
   }
 
-  if (AutoSelectorVal == 3) // 5 Ball rush
-  {
-  }
 
-  if (AutoSelectorVal == 4) // Elim-Steal
-  {
-  }
-
-  if (AutoSelectorVal == 5) // empty
-  {
-    // test();
-  }
-
-  if (AutoSelectorVal == 6) // AWP only
-  {
-  }
-
-  if (AutoSelectorVal == 7) // temporary prog skills
-  {
-  }
   // MoveTimePID(TestPara, -100, 0.5,0.1,-40,true);//score 2nd triball
   //(PID Parameters, motor speed -100 - 100, time for travel 0 - inf, time to accelerate to full speed, Absolute Heading, Braking?)
 
@@ -291,27 +205,21 @@ void autonomous(void)
 int RV;
 int LV;
 
-// int IntakeTask(void)
-// {
-//   while (true)
-//   {
-//     AntiTipTask(10.0, 0.3, 9.0, 6.0);
-//   }
-//   return 0;
-// }
 
 double lastPitch = 0;
 bool tipActive = false;
 bool antiTipEnabled = false;
 bool wasLeftPressed = false;
-int tipDirection = 0;   // +1 = tipped forward, -1 = tipped backward, 0 = not tipping
+int tipDirection = 0; // +1 = tipped forward, -1 = tipped backward, 0 = not tipping
+
+
 
 int DriveTask(void)
 {
-  const double triggerAngleA = 10.0;   // forward trigger
-  const double triggerAngleB = -10.0;  // backward trigger
-  const double releaseAngleA = 7.0;    // recovers once pitch drops below this (forward tip)
-  const double releaseAngleB = -7.0;   // recovers once pitch rises above this (backward tip) — change later
+  const double triggerAngleA = 10.0; 
+  const double triggerAngleB = -10.0; 
+  const double releaseAngleA = 7.0;   
+  const double releaseAngleB = -7.0;  
   const double kP = 3.5;
   const double kD = 0.5;
 
@@ -366,18 +274,24 @@ int DriveTask(void)
     {
       RV = -Controller1.Axis3.position(percent) + Controller1.Axis1.position(percent);
       LV = -Controller1.Axis3.position(percent) - Controller1.Axis1.position(percent);
-      if (RV > 100) RV = 100;
-      if (RV < -100) RV = -100;
-      if (LV > 100) LV = 100;
-      if (LV < -100) LV = -100;
+      if (RV > 100)
+        RV = 100;
+      if (RV < -100)
+        RV = -100;
+      if (LV > 100)
+        LV = 100;
+      if (LV < -100)
+        LV = -100;
       Move(LV, RV);
     }
     else
     {
       double correction = (pitch * kP) + (pitchRate * kD);
-      if (correction > 100) correction = 100;
-      if (correction < -100) correction = -100;
-      Move(correction, correction);
+      if (correction > 100)
+        correction = 100;
+      if (correction < -100)
+        correction = -100;
+      Move(-correction, -correction);
     }
 
     wait(10, msec);
@@ -387,42 +301,48 @@ int DriveTask(void)
 
 int V;
 
-// int ATask(void)
+// bool barUp = true;
+
+// void ibarUp(void)
 // {
-//   bool matchloadActive = false;
+//   barUp = !barUp;
+//   IntakeBar.set(barUp);
+// }
+
+
+// int ATask(void) // roller task
+// {
 //   double pow;
 //   double intakeDistance = 0;
+//   barUp = false;
 //   while (true)
 //   {
-//     if (Controller1.ButtonUp.pressing() && !matchloadActive)
-//     {
-//       matchloadActive = true;  // latch — only starts once per press
-//     }
 
-//     if (matchloadActive)
-//     {
-//       intakeDistance = intakeSensor.objectDistance(distanceUnits::in);
-//       Roller.spin(forward, 100, velocityUnits::pct);  // spin one direction until object is captured
+//     pow = (Controller1.ButtonR2.pressing() - Controller1.ButtonR1.pressing()) * 100;
+//     Roller.spin(forward, -pow, velocityUnits::pct);
 
-//       // if (intakeDistance <= 10.0)
-//       // {
-//       //   Roller.spin(forward, 0, velocityUnits::pct);  // stop the roller — object captured
-//       //   IntakeBar.set(true);
-//       //   wait(250, msec);
-//       //   chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct);
-//       //   wait(250, msec);
-//       //   Claw.set(true);
-//       //   wait(250, msec);
-//       //   chainbar.spinToPosition(812, rotationUnits::deg, 100, velocityUnits::pct);
+//     // if (barUp && intakeDistance < 100)
+//     // {
+//     //   // spin the intake to pull the object the rest of the way in
+//     //   // RunRoller(75);
+//     //   // wait(100, msec);
+//     //   // IntakeBar.set(false);
+//     //   // RunRoller(100);
+//     //   // wait(100, msec);
 
-//       //   matchloadActive = false;  // done — hand control back to the driver
-//       // }
-//     }
-//     else
-//     {
-//       pow = (Controller1.ButtonR2.pressing() - Controller1.ButtonR1.pressing()) * 100;
-//       Roller.spin(forward, -pow, velocityUnits::pct);
-//     }
+//     //   // // drop the chainbar
+//     //   // chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false); // false = non-blocking
+//     //   // wait(300, msec); // give it time to actually arrive, now that the call doesn't wait for you
+
+//     //   // liftAuto(100, 800, true); // now passing all 4 args — confirm 1 sec matches your lift's real travel time
+//     //   // wait(100, msec);
+
+//     //   // // close claw
+//     //   // Claw.set(true);
+//     //   // clawState = true; // keeps exeClaw's toggle in sync, so a later Down-press doesn't reopen it unexpectedly
+
+
+//     // }
 
 //     wait(20, msec);
 //   }
@@ -475,43 +395,6 @@ int ButtonPressingY, YTaskActiv;
 //   return 0;
 // }
 
-bool barUp = false;
-int IntakeTask(void)
-{
-  while (true)
-  {
-    if (Controller1.ButtonR2.pressing())
-    {
-      RunRoller(-100);
-      if (barUp){
-        if (intakeSensor.objectDistance(distanceUnits::mm) < 100.0) {
-          // RunRoller(100);
-          // wait(100, msec);
-          // IntakeBar.set(false);
-          // wait(100, msec);
-          // chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct);
-          // wait(100, msec);
-          // duoLift(-100, true);
-          // wait(100, msec);
-          // Claw.set(true);
-          // wait(100, msec);
-          // chainbar.spinToPosition(812, rotationUnits::deg, 100, velocityUnits::pct);
-        }
-      }
-    }
-    else if (Controller1.ButtonR1.pressing())
-    {
-      RunRoller(100);
-    }
-    else
-    {
-      RunRoller(0); // neither held: stop
-    }
-    wait(20, msec);
-  }
-  return 0;
-}
-
 int LiftTask(void)
 {
   liftL.setMaxTorque(100, percentUnits::pct);
@@ -519,15 +402,15 @@ int LiftTask(void)
 
   while (true)
   {
-    if (Controller1.ButtonL2.pressing())
+    if (Controller1.ButtonL1.pressing())
     {
-      liftL.spin(reverse, -100, percentUnits::pct);
-      liftR.spin(forward, -100, percentUnits::pct); // L2 held: spin forward
+      liftL.spin(reverse, 100, percentUnits::pct);
+      liftR.spin(forward, 100, percentUnits::pct); // L2 held: spin forward
     }
-    else if (Controller1.ButtonL1.pressing())
+    else if (Controller1.ButtonL2.pressing())
     {
-      liftL.spin(forward, -100, percentUnits::pct); // L1 held: spin backward
-      liftR.spin(reverse, -100, percentUnits::pct); // L1 held: spin backward
+      liftL.spin(forward, 100, percentUnits::pct); // L1 held: spin backward
+      liftR.spin(reverse, 100, percentUnits::pct); // L1 held: spin backward
     }
     else
     {
@@ -540,89 +423,50 @@ int LiftTask(void)
   return 0;
 }
 
-bool clawState = false;
+bool clawToggle = false;
 
-void exeClaw(void)
-{
-  clawState = !clawState;
-  Claw.set(clawState);
+void claw (void){
+  clawToggle = !clawToggle;
+  Claw.set(clawToggle);
+
 }
 
 int ClawTask(void)
 {
-  Controller1.ButtonDown.pressed(exeClaw);  // register once — VEX calls exeClaw for you on each press
-  return 0;
+  while (true){
+    Controller1.ButtonDown.pressed(claw);
+    return 0;
+  }
+  
 }
 
+  
+  
 
-
-
-int IntakeBarTask(void)
+void moveChainbarToZero()
 {
-  while (true)
-  {
-    if (Controller1.ButtonRight.pressing())
-    {
-      IntakeBar.set(true);
-      barUp = true;
-    }
-    else
-    {
-      {
-        IntakeBar.set(false);
-        barUp = false;
-      }
-    }
-  }
+  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false);
 }
 
-void moveChainbarToLow(){
-  chainbar.spinToPosition(100, rotationUnits::deg, 850, velocityUnits::pct, true);{
-  }
-}
-
-void moveChainbarToHigh(){
-  chainbar.spinToPosition(100, rotationUnits::deg, 450, velocityUnits::pct, true);{
-  }
-}
-
-void moveChainbarToZero(){
-  chainbar.spinToPosition(100, rotationUnits::deg, 0, velocityUnits::pct, true);{
-  }
+void moveChainbarToHigh()
+{
+  chainbar.spinToPosition(-400, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
 }
 
 int ChainbarTask(void)
 {
-  chainbar.setBrake(hold);  
+  chainbar.setBrake(hold);
+  chainbar.setMaxTorque(100, percentUnits::pct);
+  while (true){
 
+    Controller1.ButtonR2.pressed(moveChainbarToHigh);
+    Controller1.ButtonR1.pressed(moveChainbarToZero);
+    return 0;
 
-  while (true)
-  {
-  Controller1.ButtonB.pressed(moveChainbarToLow);
-  Controller1.ButtonA.pressed(moveChainbarToHigh);
-  Controller1.ButtonX.pressed(moveChainbarToZero);
-   
-    wait(20, msec);
   }
-  return 0;
+  
 }
 
-//   if (vexDistanceDistanceGet(intakeSensor) < 3.0) {
-//     isLoaded = true;
-//     RunRoller(50);
-//     wait 500, msec;
-//     IntakeBar.set(true);
-//     wait 500, msec;
-//     chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct);
-//     wait 500, msec;
-//     Claw.set(true);
-//     wait 500, msec;
-//     chainbar.spinToPosition(812, rotationUnits::deg, 100, velocityUnits::pct);
-//   }
-//   else {
-//     RunRoller(0);
-
-// }
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -647,10 +491,9 @@ void usercontrol(void)
   // task Atask = task(ATask);
   // task Ptask = task(PTask);
   task Ltask = task(LiftTask);
-  task Itask = task(IntakeBarTask);
   task Ctask = task(ClawTask);
   task CBtask = task(ChainbarTask);
-  task IItask = task(IntakeTask);
+  // task IItask = task(IntakeTask);
 
   // ........................................................................
   // Insert user code here. This is where you use the joystick values to

@@ -177,6 +177,8 @@ if(fabs(CSpeed)<fabs((double)Speed))
  * @param brake Brake at end, or coast\
  * @param time Max time before exiting movement(Use incase you get stuck on smt)
  */
+
+
 void MovePID(PIDDataSet KVals, PIDDataSet Dvals, int Speed, double dist, double AccT, double ABSHDG, bool brake, double time) {
     double CSpeed = 0;
     Zeroing(true, false);
@@ -412,8 +414,14 @@ void counterPID (PIDDataSet KVals, int Speed, double ABSHDG, bool brake){
   }
 }
 
+//pid functions end here
+
+//ramsete function begins here
 
 
+
+
+//custom functions begin here
 
 void clawAuto (bool state){
   if(state){
@@ -458,7 +466,7 @@ void liftAuto(int speed, int time, bool brake){
   }
   liftL.spin(reverse, -speed, percentUnits::pct);
   liftR.spin(forward, -speed, percentUnits::pct);
-  wait(time, sec);
+  wait(time, msec);
   liftL.stop();
   liftR.stop();
 }
