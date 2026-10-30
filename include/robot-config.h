@@ -13,18 +13,23 @@ extern motor RB;
 extern motor Roller;
 extern motor liftL;
 extern motor liftR;
+
+extern motor chainbarL;
+extern motor chainbarR;
 extern motor chainbar;
+
+extern motor Toggle;
+
 extern digital_out Claw;
 extern motor intake;
+
 extern digital_out Tilt;
-extern digital_out Clamp;
-extern digital_out RightBackWing;
+
 extern digital_out Pistake;
 extern motor PU;
 extern inertial Gyro;
-extern digital_out LeftBackWing;
+
 extern distance intakeSensor;
-extern digital_out IntakeBar;
 extern distance backSensor;
 
 extern const double wheelDiam;

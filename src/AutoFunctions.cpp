@@ -3,12 +3,12 @@
 #include "movement.hpp"
 #include "helper_functions.hpp"
 
-void LiftAuto (int deg, int speed, bool braking)
+void LiftAuto (int inches, int speed, bool braking)
 {
   liftL.setMaxTorque(100,percent);
   liftR.setMaxTorque(100,percent);
-  liftL.spinToPosition(deg, degrees, speed, velocityUnits::pct);
-  liftR.spinToPosition(deg, degrees, speed, velocityUnits::pct);
+  liftL.spinToPosition(inches * 360 / (2 * 3.14159), degrees, speed, velocityUnits::pct);
+  liftR.spinToPosition(inches * 360 / (2 * 3.14159), degrees, speed, velocityUnits::pct);
   if(braking){
     liftL.setStopping(brake);
     liftR.setStopping(brake);
@@ -38,4 +38,5 @@ void ClawAuto (bool state)
   Claw.set(state);
   wait(120,msec);
 }
+
 

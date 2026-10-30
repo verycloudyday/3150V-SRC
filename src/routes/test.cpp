@@ -21,9 +21,9 @@ void auton1() {
     PIDDataSet DrivePara={0,0,0};
     PIDDataSet TurnPara={0,0,0};
 
-    MoveEncoderPID(DrivePara, 100, 8, 0.1 , 0, true);
-    TurnMaxTimePID(TurnPara, 100, 0.3, 0.1, 70, true);
-    MoveEncoderPID(DrivePara, 100, 8, 0.1, 70, true);
+    // MoveEncoderPID(DrivePara, 100, 8, 0.1 , 0, true);
+    // TurnMaxTimePID(TurnPara, 100, 0.3, 0.1, 70, true);
+    // MoveEncoderPID(DrivePara, 100, 8, 0.1, 70, true);
 
 
     }

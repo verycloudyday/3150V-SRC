@@ -4,25 +4,36 @@ using namespace vex;
 using signature = vision::signature;
 using code = vision::code;
 
-// A global instance of brain used for printing to the V5 Brain screen
-brain  Brain;
+//A global instance of brain used for printing to the V5 Brain screen
+brain Brain;
 
-// VEXcode device constructors
+//VEXcode device constructors
 controller Controller1 = controller(primary);
+
+//drivetrain
 motor LF = motor(PORT12, ratio6_1, false);
-motor LM = motor(PORT1, ratio6_1, true);
+motor LM = motor(PORT4, ratio6_1, true);
 motor RF = motor(PORT19, ratio6_1, true);
-motor RM = motor(PORT1, ratio6_1, true);
+motor RM = motor(PORT16, ratio6_1, true);
 motor LB = motor(PORT11, ratio6_1, false);
 motor RB = motor(PORT20, ratio6_1, true);
-motor Roller = motor(PORT13, ratio6_1, false);
+
+//lift
 motor liftL = motor(PORT13, ratio6_1, true);
 motor liftR = motor(PORT18, ratio6_1, true);
-motor chainbar = motor(PORT16, ratio18_1, false);
-digital_out Claw = digital_out(Brain.ThreeWirePort.H);
-digital_out IntakeBar = digital_out(Brain.ThreeWirePort.G);
-digital_out Clamp = digital_out(Brain.ThreeWirePort.A);
+
+//chainbar
+motor chainbar = motor(PORT1, ratio18_1, false);
+motor chainbarL = motor(PORT2, ratio18_1, false);
+motor chainbarR = motor(PORT10, ratio18_1, false);
+
+//toggle 
+motor Toggle = motor(PORT3, ratio6_1, false);
+
+digital_out Claw = digital_out(Brain.ThreeWirePort.A);
+
 inertial Gyro = inertial(PORT14);
+
 distance intakeSensor = distance(PORT15); //change later
 distance backSensor = distance(PORT10); //change later
 //Naming convention: 

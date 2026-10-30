@@ -38,11 +38,13 @@ void pre_auton(void)
 {
   // Claw.set(true);
   EXIT = false;
-  Clamp.set(true);
-  IntakeBar.set(true);
   Claw.set(false);
   AutoSelectorVal = 0;
   chainbar.resetPosition();
+  chainbarL.resetPosition();
+  chainbarR.resetPosition();
+  liftL.resetPosition();
+  liftR.resetPosition();
   SP = false;
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
@@ -70,7 +72,6 @@ void pre_auton(void)
   DisplayWords();
 
   // task AutoSelTask=task(ScreenSelMain);
-
 
   while (!EXIT)
   {
@@ -136,7 +137,6 @@ void pre_auton(void)
     Brain.Screen.setFillColor("#39FF14");
   }
 
-
   Brain.Screen.setFillColor(black);
   Brain.Screen.setFont(monoXL);
   Brain.Screen.setPenColor("#39FF14");
@@ -169,18 +169,16 @@ void autonomous(void)
 
   // Do not change the below
 
-
-
   Zeroing(true, true);
 
   // can start editing if nessary
   // Put Auto route function into if statements to use autoselector
-   if (!EXIT)
+  if (!EXIT)
   {
     EXIT = true;
     AutoSelectorVal = 1;
   }
-  
+
   if (AutoSelectorVal == 1) // double toggle
   {
 
@@ -191,7 +189,6 @@ void autonomous(void)
   {
     auton2();
   }
-
 
   // MoveTimePID(TestPara, -100, 0.5,0.1,-40,true);//score 2nd triball
   //(PID Parameters, motor speed -100 - 100, time for travel 0 - inf, time to accelerate to full speed, Absolute Heading, Braking?)
@@ -205,21 +202,18 @@ void autonomous(void)
 int RV;
 int LV;
 
-
 double lastPitch = 0;
 bool tipActive = false;
 bool antiTipEnabled = false;
 bool wasLeftPressed = false;
 int tipDirection = 0; // +1 = tipped forward, -1 = tipped backward, 0 = not tipping
 
-
-
 int DriveTask(void)
 {
-  const double triggerAngleA = 10.0; 
-  const double triggerAngleB = -10.0; 
-  const double releaseAngleA = 7.0;   
-  const double releaseAngleB = -7.0;  
+  const double triggerAngleA = 10.0;
+  const double triggerAngleB = -10.0;
+  const double releaseAngleA = 7.0;
+  const double releaseAngleB = -7.0;
   const double kP = 3.5;
   const double kD = 0.5;
 
@@ -299,106 +293,12 @@ int DriveTask(void)
   return 0;
 }
 
-int V;
-
-// bool barUp = true;
-
-// void ibarUp(void)
-// {
-//   barUp = !barUp;
-//   IntakeBar.set(barUp);
-// }
-
-
-// int ATask(void) // roller task
-// {
-//   double pow;
-//   double intakeDistance = 0;
-//   barUp = false;
-//   while (true)
-//   {
-
-//     pow = (Controller1.ButtonR2.pressing() - Controller1.ButtonR1.pressing()) * 100;
-//     Roller.spin(forward, -pow, velocityUnits::pct);
-
-//     // if (barUp && intakeDistance < 100)
-//     // {
-//     //   // spin the intake to pull the object the rest of the way in
-//     //   // RunRoller(75);
-//     //   // wait(100, msec);
-//     //   // IntakeBar.set(false);
-//     //   // RunRoller(100);
-//     //   // wait(100, msec);
-
-//     //   // // drop the chainbar
-//     //   // chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false); // false = non-blocking
-//     //   // wait(300, msec); // give it time to actually arrive, now that the call doesn't wait for you
-
-//     //   // liftAuto(100, 800, true); // now passing all 4 args — confirm 1 sec matches your lift's real travel time
-//     //   // wait(100, msec);
-
-//     //   // // close claw
-//     //   // Claw.set(true);
-//     //   // clawState = true; // keeps exeClaw's toggle in sync, so a later Down-press doesn't reopen it unexpectedly
-
-
-//     // }
-
-//     wait(20, msec);
-//   }
-//   return 0;
-// }
-
-int ButtonPressingX, XTaskActiv;
-int ButtonPressingY, YTaskActiv;
-
-// int PTask(void)
-// {
-//   while (true)
-//   {
-//     // Toggles Tilt
-//     if (XTaskActiv == 0 && Controller1.ButtonX.pressing() && ButtonPressingX == 0)
-//     {
-//       ButtonPressingX = 1;
-//       XTaskActiv = 1;
-//       Tilt.set(true);
-//     }
-
-//     else if (!Controller1.ButtonX.pressing())
-//       ButtonPressingX = 0;
-
-//     else if (XTaskActiv == 1 && Controller1.ButtonX.pressing() && ButtonPressingX == 0)
-//     {
-//       ButtonPressingX = 1;
-//       XTaskActiv = 0;
-//       Tilt.set(false);
-//     }
-//     //----------------------
-//     // Toggles Clamp
-//     if (YTaskActiv == 0 && Controller1.ButtonY.pressing() && ButtonPressingY == 0)
-//     {
-//       ButtonPressingY = 1;
-//       YTaskActiv = 1;
-//       Clamp.set(true);
-//     }
-
-//     else if (!Controller1.ButtonY.pressing())
-//       ButtonPressingY = 0;
-
-//     else if (YTaskActiv == 1 && Controller1.ButtonY.pressing() && ButtonPressingY == 0)
-//     {
-//       ButtonPressingY = 1;
-//       YTaskActiv = 0;
-//       Clamp.set(false);
-//     }
-//   }
-//   return 0;
-// }
-
 int LiftTask(void)
 {
   liftL.setMaxTorque(100, percentUnits::pct);
   liftR.setMaxTorque(100, percentUnits::pct);
+  chainbar.setMaxTorque(100, percentUnits::pct);
+  chainbar.setBrake(hold);
 
   while (true)
   {
@@ -425,48 +325,140 @@ int LiftTask(void)
 
 bool clawToggle = false;
 
-void claw (void){
+void claw(void)
+{
   clawToggle = !clawToggle;
   Claw.set(clawToggle);
-
 }
 
 int ClawTask(void)
 {
-  while (true){
+  while (true)
+  {
     Controller1.ButtonDown.pressed(claw);
     return 0;
   }
-  
 }
 
+//MACROS START HERE 
+void postScoreMacro()
+{
+  Claw.set(false);
+  wait(0.25, seconds);
+
+  lift(3, 100, 100, true);
+
+  chainbarL.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false);
+  chainbarR.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false);
+  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
+
+  chainbarL.setBrake(hold);
+  chainbarR.setBrake(hold);
+  chainbar.setBrake(hold);
+
+}
+
+void ScoreMacro()
+{
+  Claw.set(true);
+  wait(0.25, seconds);
   
-  
+  chainbarL.spinToPosition(-750, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbarR.spinToPosition(750, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
+
+  chainbarL.setBrake(hold);
+  chainbarR.setBrake(hold);
+  chainbar.setBrake(hold);
+
+}
+
+//MACROS END HERE 
+
 
 void moveChainbarToZero()
 {
-  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false);
+  // chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false);
+  chainbarL.spinToPosition(0, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbarR.spinToPosition(0, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
+  chainbarL.setBrake(hold);
+  chainbarR.setBrake(hold);
 }
 
 void moveChainbarToHigh()
 {
-  chainbar.spinToPosition(-400, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
+  // chainbar.spinToPosition(-40, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
+  chainbarL.spinToPosition(-540, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbarR.spinToPosition(540, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
+
+  chainbarL.setBrake(hold);
+  chainbarR.setBrake(hold);
+  chainbar.setBrake(hold);
+}
+
+void moveChainbarToScore()
+{
+  // chainbar.spinToPosition(-40, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
+  chainbarL.spinToPosition(-95, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbarR.spinToPosition(95, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false);
+
+  chainbarL.setBrake(hold);
+  chainbarR.setBrake(hold);
+  chainbar.setBrake(hold);
+}
+
+void moveChainbarToLast()
+{
+  // chainbar.spinToPosition(-40, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
+
+  chainbarL.spinToPosition(-750, rotationUnits::deg, 40, velocityUnits::pct, false);
+  chainbarR.spinToPosition(750, rotationUnits::deg, 40, velocityUnits::pct, false);
+  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
+  chainbarL.setBrake(hold);
+  chainbarR.setBrake(hold);
+  chainbar.setBrake(hold);
+}
+
+
+void DoToggle()
+{
+  Toggle.setVelocity(100, percentUnits::pct);
+  Toggle.setMaxTorque(100, percentUnits::pct);
+  Toggle.spin(forward);
+}
+
+void NotToggle()
+{
+  Toggle.stop();
 }
 
 int ChainbarTask(void)
 {
+  Claw.set(false);
+  chainbarL.setBrake(hold);
+  chainbarR.setBrake(hold);
   chainbar.setBrake(hold);
+
+  chainbarL.setMaxTorque(100, percentUnits::pct);
+  chainbarR.setMaxTorque(100, percentUnits::pct);
   chainbar.setMaxTorque(100, percentUnits::pct);
-  while (true){
 
-    Controller1.ButtonR2.pressed(moveChainbarToHigh);
-    Controller1.ButtonR1.pressed(moveChainbarToZero);
+  while (true)
+  {
+
+    Controller1.ButtonX.pressed(moveChainbarToHigh);
+    Controller1.ButtonY.pressed(moveChainbarToZero);
+    Controller1.ButtonA.pressed(moveChainbarToLast);
+    Controller1.ButtonB.pressed(moveChainbarToScore);
+    Controller1.ButtonR2.pressed(DoToggle);
+    Controller1.ButtonR2.released(NotToggle);
+    Controller1.ButtonR1.pressed(postScoreMacro);
     return 0;
-
   }
-  
 }
-
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -488,8 +480,6 @@ void usercontrol(void)
   // values based on feedback from the joysticks.
 
   task Dtask = task(DriveTask);
-  // task Atask = task(ATask);
-  // task Ptask = task(PTask);
   task Ltask = task(LiftTask);
   task Ctask = task(ClawTask);
   task CBtask = task(ChainbarTask);

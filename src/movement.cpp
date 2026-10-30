@@ -455,7 +455,9 @@ void duoLift(int speed, bool brake){
   liftR.spin(forward, speed, percentUnits::pct);
 }
 
-void liftAuto(int speed, int time, bool brake){
+void lift (int inches, int speed, int torque,bool brake){
+  liftL.setMaxTorque(torque,percent);
+  liftR.setMaxTorque(torque,percent);
   if(brake){
     liftL.setStopping(hold);
     liftR.setStopping(hold);
@@ -464,11 +466,8 @@ void liftAuto(int speed, int time, bool brake){
     liftL.setStopping(coast);
     liftR.setStopping(coast);
   }
-  liftL.spin(reverse, -speed, percentUnits::pct);
-  liftR.spin(forward, -speed, percentUnits::pct);
-  wait(time, msec);
-  liftL.stop();
-  liftR.stop();
+  liftL.spinToPosition(inches * 360 / (2 * 3.14159), degrees, speed, velocityUnits::pct);
+  liftR.spinToPosition(inches * 360 / (2 * 3.14159), degrees, speed, velocityUnits::pct);
 }
 
 
