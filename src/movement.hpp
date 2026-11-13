@@ -35,9 +35,9 @@ extern void MoveTimePID(PIDDataSet KVals, int Speed, double TE,double AccT,doubl
 extern void MoveTime(int Speed, double TE,double AccT, bool brake);
 extern void counterPID (PIDDataSet KVals, int Speed, double ABSHDG, bool brake);
 extern void clawAuto (bool state);
-extern void chainbarAuto (int deg, bool brake);
+extern void ChainbarAuto (int deg, int speed, bool braking);
 extern void duoLift (int speed, bool brake);
-extern void lift (int inches, int speed, int torque,bool brake);
+
 
 
 #endif

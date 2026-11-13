@@ -28,6 +28,7 @@ extern digital_out Tilt;
 extern digital_out Pistake;
 extern motor PU;
 extern inertial Gyro;
+extern rotation odomWheel;
 
 extern distance intakeSensor;
 extern distance backSensor;

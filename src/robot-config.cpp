@@ -14,7 +14,7 @@ controller Controller1 = controller(primary);
 motor LF = motor(PORT12, ratio6_1, false);
 motor LM = motor(PORT4, ratio6_1, true);
 motor RF = motor(PORT19, ratio6_1, true);
-motor RM = motor(PORT16, ratio6_1, true);
+motor RM = motor(PORT17, ratio6_1, true);
 motor LB = motor(PORT11, ratio6_1, false);
 motor RB = motor(PORT20, ratio6_1, true);
 
@@ -28,11 +28,13 @@ motor chainbarL = motor(PORT2, ratio18_1, false);
 motor chainbarR = motor(PORT10, ratio18_1, false);
 
 //toggle 
-motor Toggle = motor(PORT3, ratio6_1, false);
+motor Toggle = motor(PORT3, ratio18_1, false);
 
 digital_out Claw = digital_out(Brain.ThreeWirePort.A);
 
-inertial Gyro = inertial(PORT14);
+inertial Gyro = inertial(PORT16);
+
+rotation odomWheel = rotation(PORT17);
 
 distance intakeSensor = distance(PORT15); //change later
 distance backSensor = distance(PORT10); //change later

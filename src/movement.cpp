@@ -1,11 +1,8 @@
 #include "vex.h"
-
 #include "math.h"
 #include "screen_gui.hpp"
 #include "helper_functions.hpp"
 #include "movement.hpp"
-
-#include <iostream>
 
 using namespace vex;
 
@@ -21,8 +18,8 @@ int JX;
 
 
 /** Resets the robot's drive train and inertial sensor
- * 
- * @param dist the 
+ *
+ * @param dist the
  * @param HDG the
  */
 void Zeroing(bool dist, bool HDG)
@@ -82,26 +79,29 @@ LF.stop();
 LM.stop();
 LB.stop();
 RF.stop();
-RM.stop();
 RB.stop();
 }
 
 void CStop()
 {
-LF.setStopping(coast);
-LM.setStopping(coast);
-LB.setStopping(coast);
-RF.setStopping(coast);
-RM.setStopping(coast);
-RB.setStopping(coast);
+  LF.setStopping(coast);
+  LM.setStopping(coast);
+  LB.setStopping(coast);
+  RF.setStopping(coast);
+  RM.setStopping(coast);
+  RB.setStopping(coast);
 
-LF.stop();
-LM.stop();
-LB.stop();
-RF.stop();
-RM.stop();
-RB.stop();
+  LF.stop();
+  LM.stop();
+  LB.stop();
+  RF.stop();
+  RM.stop();
+  RB.stop();
 }
+
+
+
+
 
 
 
@@ -123,7 +123,7 @@ int PrevE;//Error at t-1
  * @param ABSHDG absolute heading of the robot
  * @param brake Brake at end, or coast
  */
-void MoveEncoderPID(PIDDataSet KVals, int Speed, double dist,double AccT, double ABSHDG,bool brake){
+void MoveEncoderPID(PIDDataSet KVals, int Speed, double dist,double AccT, double ABSHDG, double degrees,bool brake){
   double CSpeed=0;
   Zeroing(true,false);
   ChassisDataSet SensorVals;
@@ -134,6 +134,7 @@ void MoveEncoderPID(PIDDataSet KVals, int Speed, double dist,double AccT, double
   double LGV=0;//define local gyro variable.
   PrevE=0;
   double Correction=0;
+  double theta;
   Brain.Screen.clearScreen();
 
   while(fabs(SensorVals.Avg) <= fabs(dist))
@@ -143,6 +144,8 @@ if(fabs(CSpeed)<fabs((double)Speed))
 {
   CSpeed+=Speed/AccT*0.02;
 }
+
+  
 
   SensorVals=ChassisUpdate();
   LGV=SensorVals.HDG-ABSHDG;
@@ -385,6 +388,73 @@ void MoveTime(int Speed, double TE,double AccT, bool brake){
   else CStop();
 }
 
+struct Pose {
+    double x;
+    double y;
+    double heading;
+};
+
+Pose robotPose = {0, 0, 0};
+
+double prevLeft = 0;
+double prevRight = 0;
+double prevSide = 0;
+double prevHeading = 0;
+
+bool odomInitialized = false;
+
+void updateOdometry() {
+
+
+    //initialize variables for robot position and heading
+    double left = (LF.position(degrees) + LB.position(degrees)) / 2.0; 
+    double right = (RF.position(degrees) + RB.position(degrees)) / 2.0;
+    double side = odomWheel.angle(rotationUnits::deg);
+    double heading = Gyro.heading(degrees) * M_PI / 180.0;
+
+    if (!odomInitialized) {
+        prevLeft = left;
+        prevRight = right;
+        prevSide = side;
+        prevHeading = heading;
+
+        robotPose.heading = heading;
+        odomInitialized = true;
+        return;
+    }
+
+    double dL = left - prevLeft;
+    double dR = right - prevRight;
+    double dS = side - prevSide;
+
+    dL *= wheelDiam / 360.0;
+    dR *= wheelDiam / 360.0;
+    dS *= 2 / 360.0;
+
+    double dF = (dL + dR) / 2.0;
+
+    // heading and prevHeading are in degrees, convert to radians first
+    double diffRad = (heading - prevHeading) * M_PI / 180.0;
+    double dTheta = fmod(diffRad, 2 * M_PI);
+    while (dTheta < -M_PI) { dTheta += 2 * M_PI; }
+    while (dTheta > M_PI)   { dTheta -= 2 * M_PI; }
+    double thetaMid = prevHeading + dTheta / 2.0;
+
+    double dx = dS * cos(thetaMid) + dF * sin(thetaMid);
+    double dy = -dS * sin(thetaMid) + dF * cos(thetaMid);
+
+    // Update global robot position
+    robotPose.x += dx;
+    robotPose.y += dy;
+    robotPose.heading = heading;
+
+    // update encoder and store gyro readings for next iteration
+    prevLeft = left;
+    prevRight = right;
+    prevSide = side;
+    prevHeading = heading;
+}
+
 void counterPID (PIDDataSet KVals, int Speed, double ABSHDG, bool brake){
   double CSpeed=0;
   Zeroing(true,false);
@@ -440,19 +510,6 @@ void chainbarAuto (int deg, bool brake){
     chainbar.setStopping(coast);
   }
   chainbar.spinToPosition(deg, rotationUnits::deg, 100, velocityUnits::pct);
-}
-
-void duoLift(int speed, bool brake){
-  if(brake){
-    liftL.setStopping(hold);
-    liftR.setStopping(hold);
-  }
-  else{
-    liftL.setStopping(coast);
-    liftR.setStopping(coast);
-  }
-  liftL.spin(forward, -speed, percentUnits::pct);
-  liftR.spin(forward, speed, percentUnits::pct);
 }
 
 void lift (int inches, int speed, int torque,bool brake){
