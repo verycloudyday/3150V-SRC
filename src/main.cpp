@@ -41,8 +41,6 @@ void pre_auton(void)
   Claw.set(false);
   AutoSelectorVal = 0;
   chainbar.resetPosition();
-  chainbarL.resetPosition();
-  chainbarR.resetPosition();
   liftL.resetPosition();
   liftR.resetPosition();
   SP = false;
@@ -160,6 +158,8 @@ void pre_auton(void)
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void)
+
+
 {
 
   // PID Straight and turn arguments:
@@ -347,14 +347,7 @@ void postScoreMacro()
 {
   Claw.set(true);
   wait(0.25, seconds);
-
-
-  chainbarL.spinToPosition(-95, rotationUnits::deg, 100, velocityUnits::pct, false);
-  chainbarR.spinToPosition(95, rotationUnits::deg, 100, velocityUnits::pct, false);
   chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
-
-  chainbarL.setBrake(hold);
-  chainbarR.setBrake(hold);
   chainbar.setBrake(hold);
 
 }
@@ -363,13 +356,8 @@ void ScoreMacro()
 {
   Claw.set(false);
   wait(0.25, seconds);
-  
-  chainbarL.spinToPosition(-750, rotationUnits::deg, 75, velocityUnits::pct, false);
-  chainbarR.spinToPosition(750, rotationUnits::deg, 75, velocityUnits::pct, false);
   chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
 
-  chainbarL.setBrake(hold);
-  chainbarR.setBrake(hold);
   chainbar.setBrake(hold);
 
 }
@@ -380,59 +368,17 @@ void ScoreMacro()
 void moveChainbarToZero()
 {
   // chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false);
-  chainbarL.spinToPosition(0, rotationUnits::deg, 75, velocityUnits::pct, false);
-  chainbarR.spinToPosition(0, rotationUnits::deg, 75, velocityUnits::pct, false);
-  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
-  chainbarL.setBrake(hold);
-  chainbarR.setBrake(hold);
+  chainbar.spinToPosition(0, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbar.setBrake(hold);
 }
 
 void moveChainbarToHigh()
 {
   // chainbar.spinToPosition(-40, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
-  chainbarL.spinToPosition(-525, rotationUnits::deg, 75, velocityUnits::pct, false);
-  chainbarR.spinToPosition(525, rotationUnits::deg, 75, velocityUnits::pct, false);
-  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
-
-  chainbarL.setBrake(hold);
-  chainbarR.setBrake(hold);
+  chainbar.spinToPosition(-525, rotationUnits::deg, 75, velocityUnits::pct, false);
   chainbar.setBrake(hold);
 }
 
-void moveChainbarToHighFront()
-{
-  // chainbar.spinToPosition(-40, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
-  chainbarL.spinToPosition(-370, rotationUnits::deg, 75, velocityUnits::pct, false);
-  chainbarR.spinToPosition(370, rotationUnits::deg, 75, velocityUnits::pct, false);
-  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
-
-  chainbarL.setBrake(hold);
-  chainbarR.setBrake(hold);
-  chainbar.setBrake(hold);
-}
-
-void moveChainbarToScore()
-{
-  // chainbar.spinToPosition(-40, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
-  chainbarL.spinToPosition(-120, rotationUnits::deg, 75, velocityUnits::pct, false);
-  chainbarR.spinToPosition(120, rotationUnits::deg, 75, velocityUnits::pct, false);
-  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, false);
-
-  chainbarL.setBrake(hold);
-  chainbarR.setBrake(hold);
-  chainbar.setBrake(hold);
-}
-
-void moveChainbarToLast()
-{
-  // chainbar.spinToPosition(-40, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
-  chainbarL.spinToPosition(-725, rotationUnits::deg, 60, velocityUnits::pct, false);
-  chainbarR.spinToPosition(725, rotationUnits::deg, 60, velocityUnits::pct, false);
-  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
-  chainbarL.setBrake(hold);
-  chainbarR.setBrake(hold);
-  chainbar.setBrake(hold);
-}
 
 
 void DoToggle()
@@ -450,12 +396,7 @@ void NotToggle()
 int ChainbarTask(void)
 {
   Claw.set(true);
-  chainbarL.setBrake(hold);
-  chainbarR.setBrake(hold);
   chainbar.setBrake(hold);
-
-  chainbarL.setMaxTorque(100, percentUnits::pct);
-  chainbarR.setMaxTorque(100, percentUnits::pct);
   chainbar.setMaxTorque(100, percentUnits::pct);
 
   while (true)
@@ -463,10 +404,6 @@ int ChainbarTask(void)
 
     Controller1.ButtonX.pressed(moveChainbarToHigh); //highest position back
     Controller1.ButtonB.pressed(moveChainbarToZero); //zero position
-    Controller1.ButtonA.pressed(moveChainbarToLast); //back position
-    Controller1.ButtonY.pressed(moveChainbarToScore); //score position
-    Controller1.ButtonLeft.pressed(moveChainbarToHighFront); //highest position front
-
     Controller1.ButtonR2.pressed(DoToggle);
     Controller1.ButtonR2.released(NotToggle);
 

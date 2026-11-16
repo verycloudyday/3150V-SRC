@@ -25,10 +25,7 @@ void LiftAuto (int inches, int speed, bool braking)
 
 void ChainbarAuto (int deg, int speed, bool braking)
 {
-  chainbarL.setMaxTorque(100,percent);
-  chainbarR.setMaxTorque(100,percent);
-  chainbarL.spinToPosition(-deg, degrees, speed, velocityUnits::pct);
-  chainbarR.spinToPosition(deg, degrees, speed, velocityUnits::pct);
+  chainbar.setMaxTorque(100,percent);
   chainbar.spinToPosition(0, degrees, speed, velocityUnits::pct);
   if(braking){
     chainbar.setStopping(hold);

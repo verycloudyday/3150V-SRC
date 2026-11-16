@@ -14,8 +14,6 @@ extern motor Roller;
 extern motor liftL;
 extern motor liftR;
 
-extern motor chainbarL;
-extern motor chainbarR;
 extern motor chainbar;
 
 extern motor Toggle;

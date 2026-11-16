@@ -23,9 +23,7 @@ motor liftL = motor(PORT13, ratio6_1, true);
 motor liftR = motor(PORT18, ratio6_1, true);
 
 //chainbar
-motor chainbar = motor(PORT1, ratio18_1, false);
-motor chainbarL = motor(PORT2, ratio18_1, false);
-motor chainbarR = motor(PORT10, ratio18_1, false);
+motor chainbar = motor(PORT2, ratio18_1, false);
 
 //toggle 
 motor Toggle = motor(PORT3, ratio18_1, false);
