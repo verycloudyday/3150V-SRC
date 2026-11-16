@@ -31,6 +31,9 @@ extern rotation odomWheel;
 extern distance intakeSensor;
 extern distance backSensor;
 
+extern optical colourToggleRed;
+extern optical colourToggleBlue;
+
 extern const double wheelDiam;
 extern const double wheelToMotorRatio;
 

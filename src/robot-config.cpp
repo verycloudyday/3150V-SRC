@@ -26,16 +26,19 @@ motor liftR = motor(PORT18, ratio6_1, true);
 motor chainbar = motor(PORT2, ratio18_1, false);
 
 //toggle 
-motor Toggle = motor(PORT3, ratio18_1, false);
+motor Toggle = motor(PORT16, ratio18_1, false);
 
 digital_out Claw = digital_out(Brain.ThreeWirePort.A);
 
-inertial Gyro = inertial(PORT16);
+inertial Gyro = inertial(PORT14);
 
 rotation odomWheel = rotation(PORT17);
 
 distance intakeSensor = distance(PORT15); //change later
-distance backSensor = distance(PORT10); //change later
+
+optical colourToggleRed = optical(PORT1);
+optical colourToggleBlue = optical(PORT10);
+
 //Naming convention: 
 // Important variables
 const double wheelDiam = 2.75;

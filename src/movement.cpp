@@ -389,12 +389,13 @@ void MoveTime(int Speed, double TE,double AccT, bool brake){
 }
 
 struct Pose {
+    double v;
     double x;
     double y;
     double heading;
 };
 
-Pose robotPose = {0, 0, 0};
+Pose robotPose = {0, 0, 0, 0};
 
 double prevLeft = 0;
 double prevRight = 0;
@@ -427,17 +428,23 @@ void updateOdometry() {
     double dR = right - prevRight;
     double dS = side - prevSide;
 
-    dL *= wheelDiam / 360.0;
-    dR *= wheelDiam / 360.0;
-    dS *= 2 / 360.0;
+    dL *= (wheelDiam * M_PI) / 360.0;
+    dR *= (wheelDiam * M_PI) / 360.0;
+    dS *= (wheelDiam * M_PI) / 360.0;
 
     double dF = (dL + dR) / 2.0;
 
-    // heading and prevHeading are in degrees, convert to radians first
-    double diffRad = (heading - prevHeading) * M_PI / 180.0;
+    // heading and prevHeading are already in radians (see line above), no conversion needed here
+    double diffRad = heading - prevHeading;
     double dTheta = fmod(diffRad, 2 * M_PI);
-    while (dTheta < -M_PI) { dTheta += 2 * M_PI; }
-    while (dTheta > M_PI)   { dTheta -= 2 * M_PI; }
+    
+    while (dTheta < -M_PI) { 
+      dTheta += 2 * M_PI; 
+    }
+
+    while (dTheta > M_PI)   { 
+      dTheta -= 2 * M_PI; }
+
     double thetaMid = prevHeading + dTheta / 2.0;
 
     double dx = dS * cos(thetaMid) + dF * sin(thetaMid);
@@ -453,6 +460,15 @@ void updateOdometry() {
     prevRight = right;
     prevSide = side;
     prevHeading = heading;
+}
+
+//reset odometry to a specific position and heading
+void resetOdometry(double x, double y, double headingRad) {
+  robotPose.v = 
+  robotPose.x = x;
+  robotPose.y = y;
+  robotPose.heading = headingRad;
+  odomInitialized = false; // re-baseline prev* on next updateOdometry() call
 }
 
 void counterPID (PIDDataSet KVals, int Speed, double ABSHDG, bool brake){

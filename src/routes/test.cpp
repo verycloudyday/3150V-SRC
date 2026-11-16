@@ -30,16 +30,10 @@ void auton1()
     liftR.resetPosition();
 
     chainbar.resetPosition();
-    chainbarR.resetPosition();
-    chainbarL.resetPosition();
 
     chainbar.setStopping(hold);
-    chainbarR.setStopping(hold);
-    chainbarL.setStopping(hold);
 
     chainbar.setMaxTorque(100, percent);
-    chainbarR.setMaxTorque(100, percent);
-    chainbarL.setMaxTorque(100, percent);
 
     //MoveEncoderPID(DrivePara, 100, 2.5, 0.1, 0, true);
 

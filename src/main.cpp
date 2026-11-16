@@ -408,9 +408,66 @@ int ChainbarTask(void)
     Controller1.ButtonR2.released(NotToggle);
 
     Controller1.ButtonR1.pressed(postScoreMacro);
-    
+
     return 0;
   }
+}
+
+bool toggleSelectedRed = true;
+bool selectorWasPressed = false;
+
+int ColourTask(void)
+{
+  while (true)
+  {
+    // ---- Colour selector button (REPLACE ButtonA with your chosen controller button) ----
+    bool selectorPressed = Controller1.ButtonLeft.pressing();
+    if (selectorPressed && !selectorWasPressed)
+    {
+      toggleSelectedRed = !toggleSelectedRed; // switch between red and blue selection
+      Controller1.rumble(".");
+      //Default colour is red
+      //Toggle selected true = red, false = blue 
+      
+    }
+    selectorWasPressed = selectorPressed;
+
+    if (toggleSelectedRed)
+    {
+      // Only the red toggle function works while red is selected
+      if (colourToggleRed.color() != color::red)
+      {
+        //Spin if see red
+        Toggle.setVelocity(100, percentUnits::pct);
+        Toggle.setMaxTorque(100, percentUnits::pct);
+        Toggle.setBrake(hold);
+        Toggle.spin(forward);
+      }
+      else
+      {
+        Toggle.stop();
+      }
+    }
+    else
+    {
+      if (colourToggleBlue.color() != color::blue)
+      {
+        //Spin if see blue
+        Toggle.setVelocity(100, percentUnits::pct);
+        Toggle.setMaxTorque(100, percentUnits::pct);
+        Toggle.setBrake(hold);
+        Toggle.spin(reverse);
+      }
+      else
+      {
+        // Blue detected -> stop and hold the toggle on blue
+        Toggle.stop();
+      }
+    }
+
+    wait(20, msec);
+  }
+  return 0;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -436,6 +493,7 @@ void usercontrol(void)
   task Ltask = task(LiftTask);
   task Ctask = task(ClawTask);
   task CBtask = task(ChainbarTask);
+  task CTtask = task(ColourTask);
   // task IItask = task(IntakeTask);
 
   // ........................................................................
