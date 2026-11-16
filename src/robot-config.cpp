@@ -21,12 +21,13 @@ motor liftL = motor(PORT13, ratio6_1, true);
 motor liftR = motor(PORT18, ratio6_1, true);
 
 //chainbar
-motor chainbar = motor(PORT2, ratio18_1, false);
+motor chainbar = motor(PORT15, ratio18_1, false);
 
 //toggle 
 motor Toggle = motor(PORT16, ratio18_1, false);
 
-digital_out Claw = digital_out(Brain.ThreeWirePort.A);
+digital_out Claw = digital_out(Brain.ThreeWirePort.H);
+digital_out pToggle = digital_out(Brain.ThreeWirePort.A);
 
 inertial Gyro = inertial(PORT14);
 

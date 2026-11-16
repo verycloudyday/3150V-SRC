@@ -295,6 +295,8 @@ int DriveTask(void)
   return 0;
 }
 
+// 12 Teeth of Chain = 360 Degrees of Rotation = 2.9 Inches of Linear Travel
+
 int LiftTask(void)
 {
   liftL.setMaxTorque(100, percentUnits::pct);
@@ -343,27 +345,9 @@ int ClawTask(void)
 }
 
 //MACROS START HERE 
-void postScoreMacro()
-{
-  Claw.set(true);
-  wait(0.25, seconds);
-  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
-  chainbar.setBrake(hold);
 
-}
-
-void ScoreMacro()
-{
-  Claw.set(false);
-  wait(0.25, seconds);
-  chainbar.spinToPosition(0, rotationUnits::deg, 100, velocityUnits::pct, true);
-
-  chainbar.setBrake(hold);
-
-}
 
 //MACROS END HERE 
-
 
 void moveChainbarToZero()
 {
@@ -375,23 +359,27 @@ void moveChainbarToZero()
 void moveChainbarToHigh()
 {
   // chainbar.spinToPosition(-40, rotationUnits::deg, 100, velocityUnits::pct, false);  // guessing this replaces your old "back" position — confirm the actual degree value you want
-  chainbar.spinToPosition(-525, rotationUnits::deg, 75, velocityUnits::pct, false);
+  chainbar.spinToPosition(360, rotationUnits::deg, 75, velocityUnits::pct, false);
   chainbar.setBrake(hold);
 }
 
+bool pToggleState = false;
 
-
-void DoToggle()
-{
-  Toggle.setVelocity(100, percentUnits::pct);
-  Toggle.setMaxTorque(100, percentUnits::pct);
-  Toggle.spin(forward);
+void pullToggleOn(){
+  pToggleState = !pToggleState;
+  pToggle.set(pToggleState);
 }
 
-void NotToggle()
+
+int pToggleTask(void)
 {
-  Toggle.stop();
+  while (true)
+  {
+    Controller1.ButtonA.pressed(pullToggleOn);
+    return 0;
+  }
 }
+
 
 int ChainbarTask(void)
 {
@@ -404,69 +392,102 @@ int ChainbarTask(void)
 
     Controller1.ButtonX.pressed(moveChainbarToHigh); //highest position back
     Controller1.ButtonB.pressed(moveChainbarToZero); //zero position
-    Controller1.ButtonR2.pressed(DoToggle);
-    Controller1.ButtonR2.released(NotToggle);
 
-    Controller1.ButtonR1.pressed(postScoreMacro);
+
 
     return 0;
   }
 }
 
 bool toggleSelectedRed = true;
-bool selectorWasPressed = false;
+bool colourSelector = false;
+bool cToggle = true;
+
+bool aPressed = false; // Previous state of button A
+bool yPressed = false; // Previous state of button Y
+
+// CONTROLLER Y PRESSED -> Toggle Colour Selector
+// CONTROLLER A PRESSED -> Toggle Colour Toggle
+// CONTROLLER R1 HELD -> Spin Toggle (until colour is detected if colour toggle is on)
 
 int ColourTask(void)
 {
+  // Turn on the colour sensor lights
+  colourToggleRed.setLight(ledState::on);
+  colourToggleBlue.setLight(ledState::on);
+
   while (true)
   {
-    // ---- Colour selector button (REPLACE ButtonA with your chosen controller button) ----
-    bool selectorPressed = Controller1.ButtonLeft.pressing();
-    if (selectorPressed && !selectorWasPressed)
+    if (Controller1.ButtonLeft.pressing() && !aPressed) // Only runs once per press
     {
-      toggleSelectedRed = !toggleSelectedRed; // switch between red and blue selection
-      Controller1.rumble(".");
-      //Default colour is red
-      //Toggle selected true = red, false = blue 
-      
-    }
-    selectorWasPressed = selectorPressed;
+      cToggle = !cToggle;
 
-    if (toggleSelectedRed)
-    {
-      // Only the red toggle function works while red is selected
-      if (colourToggleRed.color() != color::red)
+      if (cToggle)
       {
-        //Spin if see red
-        Toggle.setVelocity(100, percentUnits::pct);
-        Toggle.setMaxTorque(100, percentUnits::pct);
-        Toggle.setBrake(hold);
-        Toggle.spin(forward);
+        Controller1.rumble("-"); // LONG FOR COLOUR TOGGLE ON
       }
       else
       {
-        Toggle.stop();
+        Controller1.rumble("."); // SHORT FOR COLOUR TOGGLE OFF
+      }
+    }
+
+    if (Controller1.ButtonRight.pressing() && !yPressed) // Only runs once per press
+    {
+      colourSelector = !colourSelector;
+
+      if (colourSelector)
+      {
+        Controller1.rumble("."); // 1 FOR RED
+      }
+      else
+      {
+        Controller1.rumble(".."); // 2 FOR BLUE
+      }
+    }
+
+    aPressed = Controller1.ButtonLeft.pressing(); // Save button states for next loop
+    yPressed = Controller1.ButtonRight.pressing();
+
+    if (Controller1.ButtonR1.pressing()) // SPIN BUTTON HELD
+    {
+      if (!cToggle) // COLOUR TOGGLE OFF, SPIN NORMALLY
+      {
+        Toggle.spin(forward, 100, percentUnits::pct);
+      }
+
+      if (colourSelector && cToggle) // TRUE IS RED
+      {
+        if (colourToggleRed.isNearObject() && colourToggleRed.color() == color::red)
+        {
+          Toggle.stop(); // Stop motor once red is detected
+        }
+        else
+        {
+          Toggle.spin(forward, 100, percentUnits::pct); // Keep spinning until red
+        }
+      }
+
+      if (!colourSelector && cToggle) // FALSE IS BLUE
+      {
+        if (colourToggleBlue.isNearObject() && colourToggleBlue.color() == color::blue)
+        {
+          Toggle.stop(); // Stop motor once blue is detected
+        }
+        else
+        {
+          Toggle.spin(forward, 100, percentUnits::pct); // Keep spinning until blue
+        }
       }
     }
     else
     {
-      if (colourToggleBlue.color() != color::blue)
-      {
-        //Spin if see blue
-        Toggle.setVelocity(100, percentUnits::pct);
-        Toggle.setMaxTorque(100, percentUnits::pct);
-        Toggle.setBrake(hold);
-        Toggle.spin(reverse);
-      }
-      else
-      {
-        // Blue detected -> stop and hold the toggle on blue
-        Toggle.stop();
-      }
+      Toggle.stop(); // Stop motor when spin button is released
     }
 
-    wait(20, msec);
+    wait(20, msec); // Lets other tasks run
   }
+
   return 0;
 }
 

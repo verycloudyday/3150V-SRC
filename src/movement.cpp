@@ -526,9 +526,8 @@ void lift (int inches, int speed, int torque,bool brake){
     liftL.setStopping(coast);
     liftR.setStopping(coast);
   }
-  liftL.spinToPosition(inches * 360 / (2 * 3.14159), degrees, speed, velocityUnits::pct);
-  liftR.spinToPosition(inches * 360 / (2 * 3.14159), degrees, speed, velocityUnits::pct);
+  liftL.spinToPosition((inches/2.9)*360, degrees, speed, velocityUnits::pct);
+  liftR.spinToPosition((inches/2.9)*-360, degrees, speed, velocityUnits::pct);
 }
-
 
 

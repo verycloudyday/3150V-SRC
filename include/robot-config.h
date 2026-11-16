@@ -19,7 +19,7 @@ extern motor Toggle;
 extern digital_out Claw;
 extern motor intake;
 
-extern digital_out Tilt;
+extern digital_out pToggle;
 
 extern digital_out Pistake;
 extern motor PU;
