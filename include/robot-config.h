@@ -5,9 +5,7 @@ extern brain Brain;
 // VEXcode devices
 extern controller Controller1;
 extern motor LF;
-extern motor LM;
 extern motor RF;
-extern motor RM;
 extern motor LB;
 extern motor RB;
 extern motor Roller;

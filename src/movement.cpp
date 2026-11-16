@@ -26,10 +26,8 @@ void Zeroing(bool dist, bool HDG)
 {
   if(dist){
   LF.resetPosition();
-  LM.resetPosition();
   LB.resetPosition();
   RF.resetPosition();
-  RM.resetPosition();
   RB.resetPosition();
   }
   if(HDG){
@@ -40,8 +38,8 @@ void Zeroing(bool dist, bool HDG)
 ChassisDataSet ChassisUpdate()
 {
   ChassisDataSet CDS;
-  CDS.Left=get_dist_travelled((LF.position(degrees)+LM.position(degrees)+LB.position(degrees))/3.0);
-  CDS.Right=get_dist_travelled((RF.position(degrees)+RM.position(degrees)+RB.position(degrees))/3.0);
+  CDS.Left=get_dist_travelled((LF.position(degrees)+LB.position(degrees))/2.0);
+  CDS.Right=get_dist_travelled((RF.position(degrees)+RB.position(degrees))/2.0);
   CDS.Avg=(CDS.Left+CDS.Right)/2;
   CDS.Diff=CDS.Left-CDS.Right;
   CDS.HDG=Gyro.heading(degrees);
@@ -52,31 +50,24 @@ ChassisDataSet ChassisUpdate()
 void Move(int left, int right)
 {
 LF.setMaxTorque(100,percent);
-LM.setMaxTorque(100,percent);
 LB.setMaxTorque(100,percent);
 RF.setMaxTorque(100,percent);
-RM.setMaxTorque(100,percent);
 RB.setMaxTorque(100,percent);
 
 LF.spin(forward,(double)left/100.0*11,volt);
-LM.spin(forward,(double)left/100.0*11,volt);
 LB.spin(forward,(double)left/100.0*11,volt);
 RF.spin(forward,(double)right/100.0*11,volt);
-RM.spin(forward,(double)right/100.0*11,volt);
 RB.spin(forward,(double)right/100.0*11,volt);
 }
 
 void BStop()
 {
 LF.setStopping(brake);
-LM.setStopping(brake);
 LB.setStopping(brake);
 RF.setStopping(brake);
-RM.setStopping(brake);
 RB.setStopping(brake);
 
 LF.stop();
-LM.stop();
 LB.stop();
 RF.stop();
 RB.stop();
@@ -85,17 +76,13 @@ RB.stop();
 void CStop()
 {
   LF.setStopping(coast);
-  LM.setStopping(coast);
   LB.setStopping(coast);
   RF.setStopping(coast);
-  RM.setStopping(coast);
   RB.setStopping(coast);
 
   LF.stop();
-  LM.stop();
   LB.stop();
   RF.stop();
-  RM.stop();
   RB.stop();
 }
 
